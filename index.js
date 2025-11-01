@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const {UserModel , TodoModel } = require("./database/db")
 var jwt = require('jsonwebtoken'); 
 const bcrypt = require("bcrypt")
+const { z } = require("zod");
 const app = express();
 const port = 3000;
 const {auth , JWT_SECRET} = require('./middleware/auth')
 app.use(express.json());
-
 mongoose.connect("mongodb+srv://admin:nnKyRnWuN8nDfrJt@cluster0.enyplof.mongodb.net/todo-database")
 
 // app.get('/' , (req,res)=>{
@@ -15,13 +15,39 @@ mongoose.connect("mongodb+srv://admin:nnKyRnWuN8nDfrJt@cluster0.enyplof.mongodb.
 // })
 
 app.post('/signup', async (req , res) => {
+
+    const myschema = z.object({
+       email: z.string().trim().toLowerCase().email(),
+        password: z
+            .string()
+            .min(3)
+            .max(100)
+            .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+            .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+            .regex(/[!@#$%^*_]/, { message: "Password must include at least one special character (!@#$%^*_)" })
+            .regex(/^\S+$/, "Password cannot contain spaces"),
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
+    })
+
+    const parseddata = myschema.safe.Parse(req.body)
+
+    if(!parseddata.success){
+        res.json({
+            msg: "incorrect format",
+            err: parseddata.error
+        })
+        return;
+    }
+
+
     const email = req.body.email ; 
     const password = req.body.password ;
     const name = req.body.name ; 
 
-    const hashedpassword = await bcrypt.hash(password , 3); 
 
     try {
+        const hashedpassword = await bcrypt.hash(password , 3); 
+
         await UserModel.create({
             email : email,
             password : hashedpassword,
