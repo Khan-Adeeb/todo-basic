@@ -10,10 +10,6 @@ const {auth , JWT_SECRET} = require('./middleware/auth')
 app.use(express.json());
 mongoose.connect("mongodb+srv://admin:nnKyRnWuN8nDfrJt@cluster0.enyplof.mongodb.net/todo-database")
 
-// app.get('/' , (req,res)=>{
-//     res.sendFile(__dirname + "/public/index.html")
-// })
-
 app.post('/signup', async (req , res) => {
 
     const myschema = z.object({
@@ -96,21 +92,16 @@ app.post('/signin' , async (req, res) => {
 })
 
 app.post('/todos', auth, async(req ,res) => {
-    const userId = req.userId;
-    console.log(userId);
-    
     const title = req.body.title;
     const desc = req.body.description;
     const done = req.body.done;
 
     try{
         await TodoModel.create({
-            userId,
             title,
             description : desc,
             done
         })
-
         res.status(200).json({
             msg: "todo created!"
         })
