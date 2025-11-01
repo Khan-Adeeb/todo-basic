@@ -92,16 +92,19 @@ app.post('/signin' , async (req, res) => {
 })
 
 app.post('/todos', auth, async(req ,res) => {
+    const userId = req.userId;
     const title = req.body.title;
     const desc = req.body.description;
     const done = req.body.done;
 
     try{
         await TodoModel.create({
+            userId,
             title,
             description : desc,
             done
         })
+
         res.status(200).json({
             msg: "todo created!"
         })
