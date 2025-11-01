@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require("mongoose");
 const {UserModel , TodoModel } = require("./database/db")
 var jwt = require('jsonwebtoken'); 
+const bcrypt = require("bcrypt")
 const app = express();
 const port = 3000;
 const {auth , JWT_SECRET} = require('./middleware/auth')
@@ -18,10 +19,12 @@ app.post('/signup', async (req , res) => {
     const password = req.body.password ;
     const name = req.body.name ; 
 
+    const hashedpassword = await bcrypt.hash(password , 3); 
+
     try {
         await UserModel.create({
             email : email,
-            password : password,
+            password : hashedpassword,
             name : name
         })
         res.status(200).json({
@@ -43,14 +46,11 @@ app.post('/signin' , async (req, res) => {
 
     let user = await UserModel.findOne({
         email  : email ,
-        password : password
     })
 
-    if(!user){
-        res.status(403).json({
-            msg : "Username or password is incorrect"
-        })
-    }else{
+    const passMatch = await bcrypt.compare(password , user.password)
+
+    if(user && passMatch){
         const userID = user._id.toString()
         
         let token = jwt.sign({
@@ -60,6 +60,10 @@ app.post('/signin' , async (req, res) => {
         res.json({
             msg : "sucessfully signed in",
             token: token
+        })
+    }else{
+        res.status(403).json({
+            msg : "Username or password is incorrect"
         })
     }
 
