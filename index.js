@@ -12,9 +12,15 @@ app.use("/v1/user" , loginRouter );
 app.use("/v1/todo" , todoRouter);
 
 async function main (){
-    await mongoose.connect(process.env.MONGO_URL) 
-    app.listen(process.env.PORT, () => {
-        console.log(`Example app listening on port ${process.env.PORT}`)
-    })
+    try{
+        await mongoose.connect(process.env.MONGO_URL);
+        console.log("Connected to MongoDB Server");
+        
+        app.listen(process.env.PORT, () => {
+            console.log(`Example app listening on port ${process.env.PORT}`)
+        })
+    } catch (err) {
+        console.error("Database connection failed", err);
+    }
 }
 main();

@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
+const { lowercase } = require("zod");
 const Schema = mongoose.Schema;
-const ObjectId = mongoose.ObjectId ;
 
 const user = new Schema({
     email : {
         type :String,
         unique: true,
         trim : true,
+        lowercase: true,
         required : true
     },
     password: {
@@ -17,12 +18,12 @@ const user = new Schema({
         type: String,
         trim: true,
     },
-})
+}, {timestamps: true});
 
 const todo = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
+        ref: "user",
         required: true,
     },
     title: {
@@ -34,12 +35,9 @@ const todo = new Schema({
         type: Boolean,
         default: false,
     },
-});
+}, { timestamps: true });
 
-const UserModel = mongoose.model('users', user);
-const TodoModel = mongoose.model('todos', todo);
+const UserModel = mongoose.model('user', user);
+const TodoModel = mongoose.model('todo', todo);
 
-module.exports = {
-    UserModel: UserModel, 
-    TodoModel: TodoModel
-} 
+module.exports = {UserModel, TodoModel} 

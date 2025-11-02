@@ -22,24 +22,19 @@ const signupController = async (req , res) => {
         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
     })
 
-    const parseddata = myschema.safe.Parse(req.body)
+    const parsedData = myschema.safeParse(req.body)
 
-    if(!parseddata.success){
-        res.json({
-            msg: "incorrect format",
-            err: parseddata.error
-        })
-        return;
+    if(!parsedData.success){
+        return res.status(400).json({
+        msg: "Incorrect format",
+        error: parsedData.error.errors
+    });
     }
 
-
-    const email = req.body.email ; 
-    const password = req.body.password ;
-    const name = req.body.name ; 
-
+    const { email, password, name } = parsedData.data;
 
     try {
-        const hashedpassword = await bcrypt.hash(password , 3); 
+        const hashedpassword = await bcrypt.hash(password , 5); 
 
         await UserModel.create({
             email : email,
@@ -58,35 +53,33 @@ const signupController = async (req , res) => {
 
 }
 
-
 const signinController = async (req, res) => {
-    const email = req.body.email ; 
-    const password = req.body.password ;
+    const { email, password } = req.body;
     
+    try{
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+        return res.status(403).json({ msg: "Invalid email or password" });
+        }   
 
-    let user = await UserModel.findOne({
-        email  : email ,
-    })
+        const passMatch = await bcrypt.compare(password, user.password);
+        if (!passMatch) {
+        return res.status(403).json({ msg: "Invalid email or password" });
+        }
 
-    const passMatch = await bcrypt.compare(password , user.password)
+        const token = jwt.sign({
+            id: user._id.toString()
+        }, process.env.JWT_SECRET );
 
-    if(user && passMatch){
-        const userID = user._id.toString()
-        
-        let token = jwt.sign({
-            id : userID
-        }, process.env.JWT_SECRET);
-
-        res.json({
-            msg : "sucessfully signed in",
-            token: token
-        })
-    }else{
-        res.status(403).json({
-            msg : "Username or password is incorrect"
-        })
+        return res.json({
+        msg: "Successfully signed in",
+        token
+        });
+    }catch (e){
+        console.error(error);
+        return res.status(500).json({ msg: "Internal server error" });
     }
-
+    
 }
 
 module.exports = {signinController , signupController};

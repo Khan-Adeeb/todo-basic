@@ -12,6 +12,4 @@ todoRouter.put('/update', auth , updateController)
 
 todoRouter.delete('/delete', auth, deleteController)
 
-module.exports = {
-    todoRouter: todoRouter
-} 
+module.exports = {todoRouter} 

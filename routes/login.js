@@ -6,6 +6,4 @@ loginRouter.post('/signup', signupController)
 
 loginRouter.post('/signin' , signinController)
 
-module.exports = {
-    loginRouter: loginRouter
-}
+module.exports = {loginRouter}
