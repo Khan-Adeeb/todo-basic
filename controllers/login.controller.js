@@ -13,8 +13,8 @@ const signupController = async (req , res) => {
        email: z.string().trim().toLowerCase().email(),
         password: z
             .string()
-            .min(3)
-            .max(100)
+            .min(6)
+            .max(50)
             .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
             .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
             .regex(/[!@#$%^*_]/, { message: "Password must include at least one special character (!@#$%^*_)" })
