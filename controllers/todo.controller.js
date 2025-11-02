@@ -59,7 +59,7 @@ const updateController = async (req ,res)=>{
 
 const deleteController = async(req, res) => {
     const userId = req.userId;
-    const {title , desc , completed , courseId} = req.body ; 
+    const courseId = req.body ; 
     
     const todos = await TodoModel.deleteOne({
         _id: courseId,
@@ -67,7 +67,7 @@ const deleteController = async(req, res) => {
     })
 
     res.json({
-        msg : "Todo Updated!" 
+        msg : "Todo Deleted!" 
     })
 }
 
