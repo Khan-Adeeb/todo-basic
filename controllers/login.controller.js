@@ -1,5 +1,5 @@
 
-const {UserModel} = require("./database/db")
+const {UserModel} = require("../database/db")
 var jwt = require('jsonwebtoken'); 
 const bcrypt = require("bcrypt")
 const { z } = require("zod");
