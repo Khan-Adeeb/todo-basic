@@ -10,7 +10,7 @@ require('dotenv').config()
 const signupController = async (req , res) => {
 
     const myschema = z.object({
-       email: z.string().trim().toLowerCase().email(),
+       email: z.string().email().trim().toLowerCase(),
         password: z
             .string()
             .min(6)
@@ -76,7 +76,7 @@ const signinController = async (req, res) => {
         token
         });
     }catch (e){
-        console.error(error);
+        console.error(e);
         return res.status(500).json({ msg: "Internal server error" });
     }
     

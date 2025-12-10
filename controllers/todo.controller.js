@@ -13,7 +13,9 @@ const createController = async(req ,res) => {
 
     const parsedData = todoSchema.safeParse(req.body);
     if (!parsedData.success) {
-        return res.status(400).json({ msg: "Invalid todo data", errors: parsed.error.errors });
+      return res
+        .status(400)
+        .json({ msg: "Invalid todo data", errors: parsedData.error.errors });
     }
     
     const {title , description } = parsedData.data
@@ -88,7 +90,7 @@ const deleteController = async(req, res) => {
             userId: userId
         })
 
-        if (result.matchedCount === 0) { 
+        if (result.deletedCount === 0) { 
             return res.status(404).json({
                 msg: "Todo not found "
             })
