@@ -2,12 +2,7 @@ const { Router } = require("express");
 const todoRouter = Router();
 const { auth } = require("../middleware/auth");
 
-const {
-  createController,
-  viewController,
-  updateController,
-  deleteController,
-} = require("../controllers/todo.controller");
+const {createController, viewController, updateController, deleteController} = require("../controllers/todo.controller");
 
 todoRouter.post("/create", auth, createController);
 

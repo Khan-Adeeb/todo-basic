@@ -7,7 +7,7 @@ require("dotenv").config();
 
 const signupController = async (req, res) => {
   const myschema = z.object({
-    email: z.string().email().trim().toLowerCase(),
+    email: z.email().trim().toLowerCase(),
     password: z
       .string()
       .min(6)
@@ -89,3 +89,14 @@ const signinController = async (req, res) => {
 };
 
 module.exports = { signinController, signupController };
+
+
+
+ // .regex(/[a-z]/, {
+    //     message: "Password must contain at least one lowercase letter",
+    //   }).regex(/[A-Z]/, {
+    //     message: "Password must contain at least one uppercase letter",
+    //   }).regex(/[!@#$%^*_]/, {
+    //     message:
+    //       "Password must include at least one special character (!@#$%^*_)",
+    //   }).regex(/^\S+$/, "Password cannot contain spaces")
